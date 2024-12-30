@@ -112,8 +112,8 @@ topPage =
 </head>
 <body>
     <ul>
-        <li><a href="test1/">test1</a></li>
-        <li><a href="test2/">test2</a></li>
+        <li><a href="test1/index.html">test1</a></li>
+        <li><a href="test2/index.html">test2</a></li>
     </ul>
 </body>
 </html>"""
