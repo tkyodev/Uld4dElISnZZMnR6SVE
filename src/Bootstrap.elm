@@ -61,22 +61,22 @@ main_ flags =
                   , Json.Encode.string topPage
                   )
                 , ( "docs/test1/index.html"
-                  , Json.Encode.string (viewPage "test1" pages.index)
+                  , Json.Encode.string (viewPage "test1" extra1 pages.index)
                   )
                 , ( "docs/test1/subpage1.html"
-                  , Json.Encode.string (viewPage "test1" pages.subpage1)
+                  , Json.Encode.string (viewPage "test1" extra1 pages.subpage1)
                   )
                 , ( "docs/test1/subpage2.html"
-                  , Json.Encode.string (viewPage "test1" pages.subpage2)
+                  , Json.Encode.string (viewPage "test1" extra1 pages.subpage2)
                   )
                 , ( "docs/test2/index.html"
-                  , Json.Encode.string (viewPage "test2" pages.index)
+                  , Json.Encode.string (viewPage "test2" extra2 pages.index)
                   )
                 , ( "docs/test2/subpage1.html"
-                  , Json.Encode.string (viewPage "test2" pages.subpage1)
+                  , Json.Encode.string (viewPage "test2" extra2 pages.subpage1)
                   )
                 , ( "docs/test2/subpage2.html"
-                  , Json.Encode.string (viewPage "test2" pages.subpage2)
+                  , Json.Encode.string (viewPage "test2" extra2 pages.subpage2)
                   )
                 ]
           )
@@ -101,6 +101,33 @@ pages =
     }
 
 
+extra1 : String
+extra1 =
+    ""
+
+
+extra2 : String
+extra2 =
+    """<script src="https://membership.rakuten-static.com/pre/ml/web-components.min.js" async></script>
+<r10-language-selector
+    selected-theme="light"
+    otft-cache-id="abc123"
+    otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
+    otft-content-type="application/json+protobuf"
+    otft-key-name="x-goog-api-key"
+    otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
+    otft-max-number-of-text-nodes="8"
+    otft-path='"*"'
+    otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
+    otft-cache-ttl="3600"
+    style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+    ">
+</r10-language-selector> """
+
+
 topPage : String
 topPage =
     """<!DOCTYPE html>
@@ -119,18 +146,20 @@ topPage =
 </html>"""
 
 
-viewPage : String -> PageMeta -> String
-viewPage projectName meta =
+viewPage : String -> String -> PageMeta -> String
+viewPage projectName extra meta =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" ++ meta.title ++ " - " ++ projectName ++ """</title>
+    <style>body {font-family: sans-serif}</style>
 </head>
 <body>
     <header>
         <h1>""" ++ projectName ++ " - " ++ meta.title ++ """</h1>
+        """ ++ extra ++ """
         <nav>
             <ul>
                 <li>""" ++ iif (meta == pages.index) ("<b>" ++ meta.title ++ "</b>") ("<a href='index.html'>" ++ pages.index.title ++ "</a>") ++ """</li>
