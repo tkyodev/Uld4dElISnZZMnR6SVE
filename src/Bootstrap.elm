@@ -61,22 +61,22 @@ main_ flags =
                   , Json.Encode.string topPage
                   )
                 , ( "docs/test1/index.html"
-                  , Json.Encode.string (viewPage pages.index)
+                  , Json.Encode.string (viewPage "test1" pages.index)
                   )
                 , ( "docs/test1/subpage1.html"
-                  , Json.Encode.string (viewPage pages.subpage1)
+                  , Json.Encode.string (viewPage "test1" pages.subpage1)
                   )
                 , ( "docs/test1/subpage2.html"
-                  , Json.Encode.string (viewPage pages.subpage2)
+                  , Json.Encode.string (viewPage "test1" pages.subpage2)
                   )
                 , ( "docs/test2/index.html"
-                  , Json.Encode.string (viewPage pages.index)
+                  , Json.Encode.string (viewPage "test2" pages.index)
                   )
                 , ( "docs/test2/subpage1.html"
-                  , Json.Encode.string (viewPage pages.subpage1)
+                  , Json.Encode.string (viewPage "test2" pages.subpage1)
                   )
                 , ( "docs/test2/subpage2.html"
-                  , Json.Encode.string (viewPage pages.subpage2)
+                  , Json.Encode.string (viewPage "test2" pages.subpage2)
                   )
                 ]
           )
@@ -119,18 +119,18 @@ topPage =
 </html>"""
 
 
-viewPage : PageMeta -> String
-viewPage meta =
+viewPage : String -> PageMeta -> String
+viewPage projectName meta =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>""" ++ meta.title ++ """</title>
+    <title>""" ++ meta.title ++ " - " ++ projectName ++ """</title>
 </head>
 <body>
     <header>
-        <h1>""" ++ meta.title ++ """</h1>
+        <h1>""" ++ projectName ++ " - " ++ meta.title ++ """</h1>
         <nav>
             <ul>
                 <li>""" ++ iif (meta == pages.index) ("<b>" ++ meta.title ++ "</b>") ("<a href='index.html'>" ++ pages.index.title ++ "</a>") ++ """</li>
