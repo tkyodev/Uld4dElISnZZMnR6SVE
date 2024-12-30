@@ -58,7 +58,7 @@ main_ flags =
         , ( "addFiles"
           , Json.Encode.object
                 [ ( "docs/index.html"
-                  , Json.Encode.string """<ul><li><a href="test1/">test1</a></li><li><a href="test2/">test2</a></li></ul>"""
+                  , Json.Encode.string topPage
                   )
                 , ( "docs/test1/index.html"
                   , Json.Encode.string (viewPage pages.index)
@@ -101,6 +101,24 @@ pages =
     }
 
 
+topPage : String
+topPage =
+    """<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top</title>
+</head>
+<body>
+    <ul>
+        <li><a href="test1/">test1</a></li>
+        <li><a href="test2/">test2</a></li>
+    </ul>
+</body>
+</html>"""
+
+
 viewPage : PageMeta -> String
 viewPage meta =
     """<!DOCTYPE html>
@@ -125,7 +143,7 @@ viewPage meta =
         <p>""" ++ meta.sentence ++ """</p>
     </main>
     <hr />
-    <footer><a href="/">root</a></footer>
+    <footer><a href="..">root</a></footer>
 </body>
 </html>"""
 
