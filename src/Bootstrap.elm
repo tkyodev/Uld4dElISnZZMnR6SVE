@@ -115,8 +115,7 @@ topPage =
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top</title>
-    <link rel="stylesheet" href="/style.css">        
-</head>
+    <link rel="stylesheet" href="style.css"></head>
 <body>
     <ul>
         <li><a href="site_1/index.html">site_1</a> Plain</li>
@@ -255,7 +254,7 @@ viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
     """ ++ snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
-    <link rel="stylesheet" href="../style.css">        
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <header>
