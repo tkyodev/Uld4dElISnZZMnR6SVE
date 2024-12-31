@@ -1,15 +1,28 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top</title>
+    <style>
+        body 
+            { font-family: sans-serif 
+            }
+        ul 
+            { line-height: 2rem
+            }
+        .small 
+            { font-size: 0.8rem
+            }
+    </style>
 </head>
 <body>
     <ul>
-        <li><a href="site1/index.html">site1</a></li>
-        <li><a href="site2/index.html">site2</a> https://membership.rakuten-static.com/pre/ml/web-components.min.js</li>
-        <li><a href="site3/index.html">site3</a> http://127.0.0.1:8080/otft-early-access.min.js</li>
+        <li><a href="site1/index.html">site1</a> Plain</li>
+        <li><a href="site2/index.html">site2</a> Canonical <a class='small' target='_blank' href='https://membership.rakuten-static.com/pre/ml/web-components.min.js'>https://membership.rakuten-static.com/pre/ml/web-components.min.js</a></li>
+        <li><a href="site3/index.html">site3</a> Early-Access <a class='small' target='_blank' href='https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js'>https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js</a></li>
+        <li><a href="site4/index.html">site4</a> Canonical (DEV) <a class='small' target='_blank' href='http://127.0.0.1:8080/web-components.min.js'>http://127.0.0.1:8080/web-components.min.js</a></li>
+        <li><a href="site5/index.html">site5</a> Early-Access (DEV) <a class='small' target='_blank' href='http://127.0.0.1:8080/otft-early-access.min.js'>http://127.0.0.1:8080/otft-early-access.min.js</a></li>
     </ul>
 </body>
 </html>

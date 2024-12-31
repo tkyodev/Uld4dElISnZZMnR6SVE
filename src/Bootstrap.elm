@@ -64,6 +64,7 @@ main_ flags =
                             { path = "site1"
                             , snippetTop = ""
                             , snippetBottom = ""
+                            , snippetMeta = ""
                             }
                    )
                 ++ (pages
@@ -71,13 +72,31 @@ main_ flags =
                             { path = "site2"
                             , snippetTop = extraCanonical srcPreCanonical
                             , snippetBottom = ""
+                            , snippetMeta = snippetMetaGoogleNoTranslate
                             }
                    )
                 ++ (pages
                         |> site
                             { path = "site3"
-                            , snippetTop = extraEarlyAccess srcLocalEarlyAccess
+                            , snippetTop = ""
+                            , snippetBottom = extraEarlyAccess srcPreEarlyAccess
+                            , snippetMeta = snippetMetaGoogleNoTranslate
+                            }
+                   )
+                ++ (pages
+                        |> site
+                            { path = "site4"
+                            , snippetTop = extraCanonical srcLocalCanonical
                             , snippetBottom = ""
+                            , snippetMeta = snippetMetaGoogleNoTranslate
+                            }
+                   )
+                ++ (pages
+                        |> site
+                            { path = "site5"
+                            , snippetTop = ""
+                            , snippetBottom = extraEarlyAccess srcLocalEarlyAccess
+                            , snippetMeta = snippetMetaGoogleNoTranslate
                             }
                    )
              )
@@ -91,25 +110,53 @@ main_ flags =
 topPage : String
 topPage =
     """<!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top</title>
+    <style>
+        body 
+            { font-family: sans-serif 
+            }
+        ul 
+            { line-height: 2rem
+            }
+        .small 
+            { font-size: 0.8rem
+            }
+    </style>
 </head>
 <body>
     <ul>
-        <li><a href="site1/index.html">site1</a></li>
-        <li><a href="site2/index.html">site2</a> """ ++ srcPreCanonical ++ """</li>
-        <li><a href="site3/index.html">site3</a> """ ++ srcLocalEarlyAccess ++ """</li>
+        <li><a href="site1/index.html">site1</a> Plain</li>
+        <li><a href="site2/index.html">site2</a> Canonical <a class='small' target='_blank' href='""" ++ srcPreCanonical ++ """'>""" ++ srcPreCanonical ++ """</a></li>
+        <li><a href="site3/index.html">site3</a> Early-Access <a class='small' target='_blank' href='""" ++ srcPreEarlyAccess ++ """'>""" ++ srcPreEarlyAccess ++ """</a></li>
+        <li><a href="site4/index.html">site4</a> Canonical (DEV) <a class='small' target='_blank' href='""" ++ srcLocalCanonical ++ """'>""" ++ srcLocalCanonical ++ """</a></li>
+        <li><a href="site5/index.html">site5</a> Early-Access (DEV) <a class='small' target='_blank' href='""" ++ srcLocalEarlyAccess ++ """'>""" ++ srcLocalEarlyAccess ++ """</a></li>
     </ul>
 </body>
 </html>"""
 
 
+snippetMetaGoogleNoTranslate : String
+snippetMetaGoogleNoTranslate =
+    """<meta name="google" content="notranslate">"""
+
+
 srcLocalEarlyAccess : String
 srcLocalEarlyAccess =
     "http://127.0.0.1:8080/otft-early-access.min.js"
+
+
+srcLocalCanonical : String
+srcLocalCanonical =
+    "http://127.0.0.1:8080/web-components.min.js"
+
+
+srcPreEarlyAccess : String
+srcPreEarlyAccess =
+    "https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js"
 
 
 srcPreCanonical : String
@@ -121,6 +168,7 @@ site :
     { path : String
     , snippetTop : String
     , snippetBottom : String
+    , snippetMeta : String
     }
     -> Pages
     -> List ( String, String )
@@ -161,69 +209,79 @@ pages =
 extraCanonical : String -> String
 extraCanonical src =
     "<script src='" ++ src ++ """' async></script>
-<r10-language-selector
-    selected-theme="light"
-    debug="true"
-    otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
-    otft-content-type="application/json+protobuf"
-    otft-key-name="x-goog-api-key"
-    otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
-    otft-max-number-of-text-nodes="8"
-    otft-path='"*"'
-    otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
-    otft-cache-id="abc123"
-    otft-cache-ttl="3600"
-    style="
-        position: fixed;
-        top: 10px;
-        right: 10px;
-    ">
-</r10-language-selector> """
+    <r10-language-selector
+        selected-theme="light"
+        debug="true"
+        otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
+        otft-content-type="application/json+protobuf"
+        otft-key-name="x-goog-api-key"
+        otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
+        otft-max-number-of-text-nodes="8"
+        otft-path='"*"'
+        otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
+        otft-cache-id="abc123"
+        otft-cache-ttl="3600"
+        style="
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        ">
+    </r10-language-selector> """
 
 
 extraEarlyAccess : String -> String
 extraEarlyAccess src =
     -- http://127.0.0.1:8080/otft-early-access.min.js
     "<script src='" ++ src ++ """'></script>
-<script>
-    __otft_earlyAccess(
-        { primaryColor: 'blue'
-        , borderRadius: '5'
-        , withDisclaimer: 'false'
-        , debug: 'true'
-        , otftApiUrl: 'https://translate-pa.googleapis.com/v1/translateHtml'
-        , otftContentType: 'application/json+protobuf'
-        , otftKeyName: 'x-goog-api-key'
-        , otftKeyValue: 'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN'
-        , otftMaxNumberOfTextNodes: '8'
-        , otftPath: '"*"'
-        , otftPayload:  '[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
-        , otftCacheId: null
-        , otftCacheTtl: '3600'
-        }
-    );
-</script> """
+    <script>
+        __otft_earlyAccess(
+            { primaryColor: 'blue'
+            , borderRadius: '5'
+            , withDisclaimer: 'false'
+            , debug: 'true'
+            , otftApiUrl: 'https://translate-pa.googleapis.com/v1/translateHtml'
+            , otftContentType: 'application/json+protobuf'
+            , otftKeyName: 'x-goog-api-key'
+            , otftKeyValue: 'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN'
+            , otftMaxNumberOfTextNodes: '8'
+            , otftPath: '"*"'
+            , otftPayload:  '[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
+            , otftCacheId: null
+            , otftCacheTtl: '3600'
+            }
+        );
+    </script> """
 
 
 viewPage :
     { path : String
     , snippetTop : String
     , snippetBottom : String
+    , snippetMeta : String
     }
     -> PageMeta
     -> String
-viewPage { path, snippetTop, snippetBottom } meta =
+viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    """ ++ snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
-    <style>body {font-family: sans-serif}</style>
+    <style>
+        body 
+            { font-family: sans-serif 
+            }
+        ul 
+            { line-height: 2rem
+            }
+    </style>
 </head>
 <body>
     <header>
-        <h1>""" ++ path ++ " - " ++ meta.title ++ """</h1>
+        <p>""" ++ path ++ """</p>
+        <h1>""" ++ meta.title ++ """</h1>
         """ ++ snippetTop ++ """
         <nav>
             <ul>
