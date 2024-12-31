@@ -255,7 +255,7 @@ viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
     """ ++ snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
-    <link rel="stylesheet" href="/style.css">        
+    <link rel="stylesheet" href="../style.css">        
 </head>
 <body>
     <header>
