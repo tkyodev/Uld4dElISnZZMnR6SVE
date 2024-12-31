@@ -56,76 +56,36 @@ main_ flags =
           , Json.Encode.list Json.Encode.string []
           )
         , ( "addFiles"
-          , Json.Encode.object
-                [ ( "docs/index.html"
-                  , Json.Encode.string topPage
-                  )
-                , ( "docs/test1/index.html"
-                  , Json.Encode.string (viewPage "test1" extra1 pages.index)
-                  )
-                , ( "docs/test1/subpage1.html"
-                  , Json.Encode.string (viewPage "test1" extra1 pages.subpage1)
-                  )
-                , ( "docs/test1/subpage2.html"
-                  , Json.Encode.string (viewPage "test1" extra1 pages.subpage2)
-                  )
-                , ( "docs/test2/index.html"
-                  , Json.Encode.string (viewPage "test2" extra2 pages.index)
-                  )
-                , ( "docs/test2/subpage1.html"
-                  , Json.Encode.string (viewPage "test2" extra2 pages.subpage1)
-                  )
-                , ( "docs/test2/subpage2.html"
-                  , Json.Encode.string (viewPage "test2" extra2 pages.subpage2)
-                  )
-                ]
+          , ((( "docs/index.html"
+              , topPage
+              )
+                :: (pages
+                        |> site
+                            { path = "site1"
+                            , snippetTop = ""
+                            , snippetBottom = ""
+                            }
+                   )
+                ++ (pages
+                        |> site
+                            { path = "site2"
+                            , snippetTop = extraCanonical srcPreCanonical
+                            , snippetBottom = ""
+                            }
+                   )
+                ++ (pages
+                        |> site
+                            { path = "site3"
+                            , snippetTop = extraEarlyAccess srcLocalEarlyAccess
+                            , snippetBottom = ""
+                            }
+                   )
+             )
+                |> List.map (Tuple.mapSecond Json.Encode.string)
+            )
+                |> Json.Encode.object
           )
         ]
-
-
-type alias PageMeta =
-    { title : String
-    , sentence : String
-    }
-
-
-pages :
-    { index : PageMeta
-    , subpage1 : PageMeta
-    , subpage2 : PageMeta
-    }
-pages =
-    { index = { title = "トップページ", sentence = "参照透過性とは、同じ値を与えたら返り値も必ず同じになるような性質である。" }
-    , subpage1 = { title = "サブページ1", sentence = "参照透過性を持つことは、その関数が状態を持たないことを保証する。" }
-    , subpage2 = { title = "サブページ2", sentence = "状態を持たない数学的な関数は、並列処理を実現するのに適している。" }
-    }
-
-
-extra1 : String
-extra1 =
-    ""
-
-
-extra2 : String
-extra2 =
-    """<script src="https://membership.rakuten-static.com/pre/ml/web-components.min.js" async></script>
-<r10-language-selector
-    selected-theme="light"
-    otft-cache-id="abc123"
-    otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
-    otft-content-type="application/json+protobuf"
-    otft-key-name="x-goog-api-key"
-    otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
-    otft-max-number-of-text-nodes="8"
-    otft-path='"*"'
-    otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
-    otft-cache-ttl="3600"
-    style="
-        position: fixed;
-        top: 10px;
-        right: 10px;
-    ">
-</r10-language-selector> """
 
 
 topPage : String
@@ -139,15 +99,135 @@ topPage =
 </head>
 <body>
     <ul>
-        <li><a href="test1/index.html">test1</a></li>
-        <li><a href="test2/index.html">test2</a></li>
+        <li><a href="site1/index.html">site1</a></li>
+        <li><a href="site2/index.html">site2</a> """ ++ srcPreCanonical ++ """</li>
+        <li><a href="site3/index.html">site3</a> """ ++ srcLocalEarlyAccess ++ """</li>
     </ul>
 </body>
 </html>"""
 
 
-viewPage : String -> String -> PageMeta -> String
-viewPage projectName extra meta =
+srcLocalEarlyAccess : String
+srcLocalEarlyAccess =
+    "http://127.0.0.1:8080/otft-early-access.min.js"
+
+
+srcPreCanonical : String
+srcPreCanonical =
+    "https://membership.rakuten-static.com/pre/ml/web-components.min.js"
+
+
+site :
+    { path : String
+    , snippetTop : String
+    , snippetBottom : String
+    }
+    -> Pages
+    -> List ( String, String )
+site { path, snippetTop, snippetBottom } pages_ =
+    [ ( "docs/" ++ path ++ "/index.html"
+      , viewPage
+            { projectName = path
+            , snippetTop = snippetTop
+            , snippetBottom = snippetBottom
+            , meta = pages_.index
+            }
+      )
+    , ( "docs/" ++ path ++ "/subpage1.html"
+      , viewPage
+            { projectName = path
+            , snippetTop = snippetTop
+            , snippetBottom = snippetBottom
+            , meta = pages_.subpage1
+            }
+      )
+    , ( "docs/" ++ path ++ "/subpage2.html"
+      , viewPage
+            { projectName = path
+            , snippetTop = snippetTop
+            , snippetBottom = snippetBottom
+            , meta = pages_.subpage2
+            }
+      )
+    ]
+
+
+type alias PageMeta =
+    { title : String
+    , sentence : String
+    }
+
+
+type alias Pages =
+    { index : PageMeta
+    , subpage1 : PageMeta
+    , subpage2 : PageMeta
+    }
+
+
+pages : Pages
+pages =
+    { index = { title = "トップページ", sentence = "参照透過性とは、同じ値を与えたら返り値も必ず同じになるような性質である。" }
+    , subpage1 = { title = "サブページ1", sentence = "参照透過性を持つことは、その関数が状態を持たないことを保証する。" }
+    , subpage2 = { title = "サブページ2", sentence = "状態を持たない数学的な関数は、並列処理を実現するのに適している。" }
+    }
+
+
+extraCanonical : String -> String
+extraCanonical src =
+    "<script src='" ++ src ++ """' async></script>
+<r10-language-selector
+    selected-theme="light"
+    debug="true"
+    otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
+    otft-content-type="application/json+protobuf"
+    otft-key-name="x-goog-api-key"
+    otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
+    otft-max-number-of-text-nodes="8"
+    otft-path='"*"'
+    otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
+    otft-cache-id="abc123"
+    otft-cache-ttl="3600"
+    style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+    ">
+</r10-language-selector> """
+
+
+extraEarlyAccess : String -> String
+extraEarlyAccess src =
+    -- http://127.0.0.1:8080/otft-early-access.min.js
+    "<script src='" ++ src ++ """'></script>
+<script>
+    __otft_earlyAccess(
+        { primaryColor: 'blue'
+        , borderRadius: '5'
+        , withDisclaimer: 'false'
+        , debug: 'true'
+        , otftApiUrl: 'https://translate-pa.googleapis.com/v1/translateHtml'
+        , otftContentType: 'application/json+protobuf'
+        , otftKeyName: 'x-goog-api-key'
+        , otftKeyValue: 'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN'
+        , otftMaxNumberOfTextNodes: '8'
+        , otftPath: '"*"'
+        , otftPayload:  '[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
+        , otftCacheId: null
+        , otftCacheTtl: '3600'
+        }
+    );
+</script> """
+
+
+viewPage :
+    { projectName : String
+    , snippetTop : String
+    , snippetBottom : String
+    , meta : PageMeta
+    }
+    -> String
+viewPage { projectName, snippetTop, snippetBottom, meta } =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -159,7 +239,7 @@ viewPage projectName extra meta =
 <body>
     <header>
         <h1>""" ++ projectName ++ " - " ++ meta.title ++ """</h1>
-        """ ++ extra ++ """
+        """ ++ snippetTop ++ """
         <nav>
             <ul>
                 <li>""" ++ iif (meta == pages.index) ("<b>" ++ meta.title ++ "</b>") ("<a href='index.html'>" ++ pages.index.title ++ "</a>") ++ """</li>
@@ -173,6 +253,7 @@ viewPage projectName extra meta =
     </main>
     <hr />
     <footer><a href="..">root</a></footer>
+    """ ++ snippetBottom ++ """
 </body>
 </html>"""
 
