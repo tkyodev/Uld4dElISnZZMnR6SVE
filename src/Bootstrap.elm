@@ -61,7 +61,7 @@ main_ flags =
               )
                 :: (pages
                         |> site
-                            { path = "site1"
+                            { path = "site_1"
                             , snippetTop = ""
                             , snippetBottom = ""
                             , snippetMeta = ""
@@ -69,7 +69,7 @@ main_ flags =
                    )
                 ++ (pages
                         |> site
-                            { path = "site2"
+                            { path = "site_2"
                             , snippetTop = extraCanonical srcPreCanonical
                             , snippetBottom = ""
                             , snippetMeta = snippetMetaGoogleNoTranslate
@@ -77,7 +77,7 @@ main_ flags =
                    )
                 ++ (pages
                         |> site
-                            { path = "site3"
+                            { path = "site_3"
                             , snippetTop = ""
                             , snippetBottom = extraEarlyAccess srcPreEarlyAccess
                             , snippetMeta = snippetMetaGoogleNoTranslate
@@ -85,7 +85,7 @@ main_ flags =
                    )
                 ++ (pages
                         |> site
-                            { path = "site4"
+                            { path = "site_4"
                             , snippetTop = extraCanonical srcLocalCanonical
                             , snippetBottom = ""
                             , snippetMeta = snippetMetaGoogleNoTranslate
@@ -93,7 +93,7 @@ main_ flags =
                    )
                 ++ (pages
                         |> site
-                            { path = "site5"
+                            { path = "site_5"
                             , snippetTop = ""
                             , snippetBottom = extraEarlyAccess srcLocalEarlyAccess
                             , snippetMeta = snippetMetaGoogleNoTranslate
@@ -115,25 +115,15 @@ topPage =
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top</title>
-    <style>
-        body 
-            { font-family: sans-serif 
-            }
-        ul 
-            { line-height: 2rem
-            }
-        .small 
-            { font-size: 0.8rem
-            }
-    </style>
+    <link rel="stylesheet" href="/style.css">        
 </head>
 <body>
     <ul>
-        <li><a href="site1/index.html">site1</a> Plain</li>
-        <li><a href="site2/index.html">site2</a> Canonical <a class='small' target='_blank' href='""" ++ srcPreCanonical ++ """'>""" ++ srcPreCanonical ++ """</a></li>
-        <li><a href="site3/index.html">site3</a> Early-Access <a class='small' target='_blank' href='""" ++ srcPreEarlyAccess ++ """'>""" ++ srcPreEarlyAccess ++ """</a></li>
-        <li><a href="site4/index.html">site4</a> Canonical (DEV) <a class='small' target='_blank' href='""" ++ srcLocalCanonical ++ """'>""" ++ srcLocalCanonical ++ """</a></li>
-        <li><a href="site5/index.html">site5</a> Early-Access (DEV) <a class='small' target='_blank' href='""" ++ srcLocalEarlyAccess ++ """'>""" ++ srcLocalEarlyAccess ++ """</a></li>
+        <li><a href="site_1/index.html">site_1</a> Plain</li>
+        <li><a href="site_2/index.html">site_2</a> Canonical <a class='small' target='_blank' href='""" ++ srcPreCanonical ++ """'>""" ++ srcPreCanonical ++ """</a></li>
+        <li><a href="site_3/index.html">site_3</a> Early-Access <a class='small' target='_blank' href='""" ++ srcPreEarlyAccess ++ """'>""" ++ srcPreEarlyAccess ++ """</a></li>
+        <li><a href="site_4/index.html">site_4</a> Canonical (DEV) <a class='small' target='_blank' href='""" ++ srcLocalCanonical ++ """'>""" ++ srcLocalCanonical ++ """</a></li>
+        <li><a href="site_5/index.html">site_5</a> Early-Access (DEV) <a class='small' target='_blank' href='""" ++ srcLocalEarlyAccess ++ """'>""" ++ srcLocalEarlyAccess ++ """</a></li>
     </ul>
 </body>
 </html>"""
@@ -221,11 +211,7 @@ extraCanonical src =
         otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
         otft-cache-id="abc123"
         otft-cache-ttl="3600"
-        style="
-            position: fixed;
-            top: 10px;
-            right: 10px;
-        ">
+    >
     </r10-language-selector> """
 
 
@@ -269,33 +255,29 @@ viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
     """ ++ snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
-    <style>
-        body 
-            { font-family: sans-serif 
-            }
-        ul 
-            { line-height: 2rem
-            }
-    </style>
+    <link rel="stylesheet" href="/style.css">        
 </head>
 <body>
     <header>
-        <p>""" ++ path ++ """</p>
-        <h1>""" ++ meta.title ++ """</h1>
-        """ ++ snippetTop ++ """
-        <nav>
-            <ul>
-                <li>""" ++ iif (meta == pages.index) ("<b>" ++ meta.title ++ "</b>") ("<a href='index.html'>" ++ pages.index.title ++ "</a>") ++ """</li>
-                <li>""" ++ iif (meta == pages.subpage1) ("<b>" ++ meta.title ++ "</b>") ("<a href='subpage1.html'>" ++ pages.subpage1.title ++ "</a>") ++ """</li>
-                <li>""" ++ iif (meta == pages.subpage2) ("<b>" ++ meta.title ++ "</b>") ("<a href='subpage2.html'>" ++ pages.subpage2.title ++ "</a>") ++ """</li>
-            </ul>
-        </nav>
+        <div id="top-header">
+            <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " path ++ """</div>
+            """ ++ snippetTop ++ """
+        </div>
+        <div id="sub-header">
+            <h1>""" ++ meta.title ++ """</h1>
+            <nav>
+                <ul>
+                    <li>""" ++ iif (meta == pages.index) ("<b>" ++ meta.title ++ "</b>") ("<a href='index.html'>" ++ pages.index.title ++ "</a>") ++ """</li>
+                    <li>""" ++ iif (meta == pages.subpage1) ("<b>" ++ meta.title ++ "</b>") ("<a href='subpage1.html'>" ++ pages.subpage1.title ++ "</a>") ++ """</li>
+                    <li>""" ++ iif (meta == pages.subpage2) ("<b>" ++ meta.title ++ "</b>") ("<a href='subpage2.html'>" ++ pages.subpage2.title ++ "</a>") ++ """</li>
+                </ul>
+            </nav>
+        </div>
     </header>
     <main>
         <p>""" ++ meta.sentence ++ """</p>
     </main>
-    <hr />
-    <footer><a href="..">root</a></footer>
+    <footer></footer>
     """ ++ snippetBottom ++ """
 </body>
 </html>"""

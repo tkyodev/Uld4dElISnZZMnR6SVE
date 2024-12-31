@@ -4,21 +4,14 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サブページ1 - site2</title>
-    <style>
-        body 
-            { font-family: sans-serif 
-            }
-        ul 
-            { line-height: 2rem
-            }
-    </style>
+    <title>サブページ1 - site_4</title>
+    <link rel="stylesheet" href="/style.css">        
 </head>
 <body>
     <header>
-        <p>site2</p>
-        <h1>サブページ1</h1>
-        <script src='https://membership.rakuten-static.com/pre/ml/web-components.min.js' async></script>
+        <div id="top-header">
+            <div><a id="home-icon" href="..">⌂</a> ❯ site 4</div>
+            <script src='http://127.0.0.1:8080/web-components.min.js' async></script>
     <r10-language-selector
         selected-theme="light"
         debug="true"
@@ -31,25 +24,24 @@
         otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
         otft-cache-id="abc123"
         otft-cache-ttl="3600"
-        style="
-            position: fixed;
-            top: 10px;
-            right: 10px;
-        ">
+    >
     </r10-language-selector> 
-        <nav>
-            <ul>
-                <li><a href='index.html'>トップページ</a></li>
-                <li><b>サブページ1</b></li>
-                <li><a href='subpage2.html'>サブページ2</a></li>
-            </ul>
-        </nav>
+        </div>
+        <div id="sub-header">
+            <h1>サブページ1</h1>
+            <nav>
+                <ul>
+                    <li><a href='index.html'>トップページ</a></li>
+                    <li><b>サブページ1</b></li>
+                    <li><a href='subpage2.html'>サブページ2</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
     <main>
         <p>参照透過性を持つことは、その関数が状態を持たないことを保証する。</p>
     </main>
-    <hr />
-    <footer><a href="..">root</a></footer>
+    <footer></footer>
     
 </body>
 </html>
