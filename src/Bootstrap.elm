@@ -124,30 +124,15 @@ site :
     }
     -> Pages
     -> List ( String, String )
-site { path, snippetTop, snippetBottom } pages_ =
-    [ ( "docs/" ++ path ++ "/index.html"
-      , viewPage
-            { projectName = path
-            , snippetTop = snippetTop
-            , snippetBottom = snippetBottom
-            , meta = pages_.index
-            }
+site args pages_ =
+    [ ( "docs/" ++ args.path ++ "/index.html"
+      , viewPage args pages_.index
       )
-    , ( "docs/" ++ path ++ "/subpage1.html"
-      , viewPage
-            { projectName = path
-            , snippetTop = snippetTop
-            , snippetBottom = snippetBottom
-            , meta = pages_.subpage1
-            }
+    , ( "docs/" ++ args.path ++ "/subpage1.html"
+      , viewPage args pages_.subpage1
       )
-    , ( "docs/" ++ path ++ "/subpage2.html"
-      , viewPage
-            { projectName = path
-            , snippetTop = snippetTop
-            , snippetBottom = snippetBottom
-            , meta = pages_.subpage2
-            }
+    , ( "docs/" ++ args.path ++ "/subpage2.html"
+      , viewPage args pages_.subpage2
       )
     ]
 
@@ -221,24 +206,24 @@ extraEarlyAccess src =
 
 
 viewPage :
-    { projectName : String
+    { path : String
     , snippetTop : String
     , snippetBottom : String
-    , meta : PageMeta
     }
+    -> PageMeta
     -> String
-viewPage { projectName, snippetTop, snippetBottom, meta } =
+viewPage { path, snippetTop, snippetBottom } meta =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>""" ++ meta.title ++ " - " ++ projectName ++ """</title>
+    <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
     <style>body {font-family: sans-serif}</style>
 </head>
 <body>
     <header>
-        <h1>""" ++ projectName ++ " - " ++ meta.title ++ """</h1>
+        <h1>""" ++ path ++ " - " ++ meta.title ++ """</h1>
         """ ++ snippetTop ++ """
         <nav>
             <ul>
