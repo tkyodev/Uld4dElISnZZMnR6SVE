@@ -51,40 +51,57 @@ port dataFromElmToJavascript : Json.Encode.Value -> Cmd msg
 
 type alias Site =
     { path : String
-    , snippetBottom : String
+    , snippetBottom : String -> String
     , snippetMeta : String
-    , snippetTop : String
+    , snippetTop : String -> String
+    , scriptSrc : String
+    , name : String
     }
 
 
 sites : List Site
 sites =
     [ { path = "site_1"
-      , snippetTop = ""
-      , snippetBottom = ""
+      , snippetTop = \_ -> ""
+      , snippetBottom = \_ -> ""
       , snippetMeta = ""
+      , scriptSrc = ""
+      , name = "Plain"
       }
     , { path = "site_2"
-      , snippetTop = extraCanonical srcPreCanonical
-      , snippetBottom = ""
+      , snippetTop = extraCanonical
+      , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcPreCanonical
+      , name = "Canonical"
       }
     , { path = "site_3"
-      , snippetTop = ""
-      , snippetBottom = extraEarlyAccess srcPreEarlyAccess
+      , snippetTop = \_ -> ""
+      , snippetBottom = extraEarlyAccess
       , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcPreEarlyAccess
+      , name = "Early-Access"
       }
     , { path = "site_4"
-      , snippetTop = extraCanonical srcLocalCanonical
-      , snippetBottom = ""
+      , snippetTop = extraCanonical
+      , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcLocalCanonical
+      , name = "Canonical (DEV)"
       }
     , { path = "site_5"
-      , snippetTop = ""
-      , snippetBottom = extraEarlyAccess srcLocalEarlyAccess
+      , snippetTop = \_ -> ""
+      , snippetBottom = extraEarlyAccess
       , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcLocalEarlyAccess
+      , name = "Early-Access (DEV)"
       }
     ]
+
+
+folder : String
+folder =
+    "docs/"
 
 
 main_ : Flags -> Json.Encode.Value
@@ -94,35 +111,34 @@ main_ flags =
         pages_ =
             List.concat
                 (List.map
-                    (\site ->
-                        pages
-                            |> siteToPages site
-                    )
+                    siteToPages
                     sites
                 )
 
-        topPage_ =
-            ( "docs/index.html"
-            , topPage
+        topPage : ( String, String )
+        topPage =
+            ( folder ++ "index.html"
+            , indexHtml
             )
 
-        css_ =
-            ( "docs/style.css"
-            , css
+        style : ( String, String )
+        style =
+            ( folder ++ "style.css"
+            , styleCss
             )
     in
     Json.Encode.object
         [ ( "removeFolders"
-          , Json.Encode.list Json.Encode.string []
+          , Json.Encode.list Json.Encode.string [ folder ]
           )
         , ( "addFiles"
-          , Json.Encode.object (List.map (Tuple.mapSecond Json.Encode.string) (topPage_ :: css_ :: pages_))
+          , Json.Encode.object (List.map (Tuple.mapSecond Json.Encode.string) (topPage :: style :: pages_))
           )
         ]
 
 
-topPage : String
-topPage =
+indexHtml : String
+indexHtml =
     """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,15 +147,24 @@ topPage =
     <title>Top</title>
     <link rel="stylesheet" href="style.css"></head>
 <body>
-    <ul>
-        <li><a href="site_1/index.html">site_1</a> Plain</li>
-        <li><a href="site_2/index.html">site_2</a> Canonical <a class='small' target='_blank' href='""" ++ srcPreCanonical ++ """'>""" ++ srcPreCanonical ++ """</a></li>
-        <li><a href="site_3/index.html">site_3</a> Early-Access <a class='small' target='_blank' href='""" ++ srcPreEarlyAccess ++ """'>""" ++ srcPreEarlyAccess ++ """</a></li>
-        <li><a href="site_4/index.html">site_4</a> Canonical (DEV) <a class='small' target='_blank' href='""" ++ srcLocalCanonical ++ """'>""" ++ srcLocalCanonical ++ """</a></li>
-        <li><a href="site_5/index.html">site_5</a> Early-Access (DEV) <a class='small' target='_blank' href='""" ++ srcLocalEarlyAccess ++ """'>""" ++ srcLocalEarlyAccess ++ """</a></li>
-    </ul>
+    <ul>""" ++ String.join "" (List.map (\site -> siteMenuLine site) sites) ++ """</ul>
 </body>
 </html>"""
+
+
+siteMenuLine : Site -> String
+siteMenuLine site =
+    "<li><a href='"
+        ++ site.path
+        ++ "/index.html'>"
+        ++ String.replace "_" " " site.path
+        ++ """</a> """
+        ++ site.name
+        ++ " <a class='small' target='_blank' href='"
+        ++ site.scriptSrc
+        ++ "'>"
+        ++ site.scriptSrc
+        ++ "</a></li>"
 
 
 snippetMetaGoogleNoTranslate : String
@@ -167,16 +192,24 @@ srcPreCanonical =
     "https://membership.rakuten-static.com/pre/ml/web-components.min.js"
 
 
-siteToPages : Site -> Pages -> List ( String, String )
-siteToPages args pages_ =
-    [ ( "docs/" ++ args.path ++ "/index.html"
-      , viewPage args pages_.index
+pages : Pages
+pages =
+    { index = { title = "トップページ", sentence = "参照透過性とは、同じ値を与えたら返り値も必ず同じになるような性質である。" }
+    , subpage1 = { title = "サブページ1", sentence = "参照透過性を持つことは、その関数が状態を持たないことを保証する。" }
+    , subpage2 = { title = "サブページ2", sentence = "状態を持たない数学的な関数は、並列処理を実現するのに適している。" }
+    }
+
+
+siteToPages : Site -> List ( String, String )
+siteToPages args =
+    [ ( folder ++ args.path ++ "/index.html"
+      , viewPage args pages.index
       )
-    , ( "docs/" ++ args.path ++ "/subpage1.html"
-      , viewPage args pages_.subpage1
+    , ( folder ++ args.path ++ "/subpage1.html"
+      , viewPage args pages.subpage1
       )
-    , ( "docs/" ++ args.path ++ "/subpage2.html"
-      , viewPage args pages_.subpage2
+    , ( folder ++ args.path ++ "/subpage2.html"
+      , viewPage args pages.subpage2
       )
     ]
 
@@ -194,11 +227,40 @@ type alias Pages =
     }
 
 
-pages : Pages
-pages =
-    { index = { title = "トップページ", sentence = "参照透過性とは、同じ値を与えたら返り値も必ず同じになるような性質である。" }
-    , subpage1 = { title = "サブページ1", sentence = "参照透過性を持つことは、その関数が状態を持たないことを保証する。" }
-    , subpage2 = { title = "サブページ2", sentence = "状態を持たない数学的な関数は、並列処理を実現するのに適している。" }
+asString : String -> String
+asString string =
+    Json.Encode.encode 0 <| Json.Encode.string string
+
+
+attrs :
+    { debug : String
+    , otftApiUrl : String
+    , otftCacheId : String
+    , otftCacheTtl : String
+    , otftContentType : String
+    , otftKeyName : String
+    , otftKeyValue : String
+    , otftMaxNumberOfTextNodes : String
+    , otftPath : String
+    , otftPayload : String
+    , primaryColor : String
+    , selectedTheme : String
+    , withDisclaimer : String
+    }
+attrs =
+    { primaryColor = "blue"
+    , selectedTheme = "light"
+    , withDisclaimer = "true"
+    , debug = "true"
+    , otftApiUrl = "https://translate-pa.googleapis.com/v1/translateHtml"
+    , otftContentType = "application/json+protobuf"
+    , otftKeyName = "x-goog-api-key"
+    , otftKeyValue = "VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
+    , otftMaxNumberOfTextNodes = "8"
+    , otftPath = asString "*"
+    , otftPayload = """[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]"""
+    , otftCacheId = "abc123"
+    , otftCacheTtl = "3600"
     }
 
 
@@ -206,17 +268,17 @@ extraCanonical : String -> String
 extraCanonical src =
     "<script src='" ++ src ++ """' async></script>
     <r10-language-selector
-        selected-theme="light"
-        debug="true"
-        otft-api-url="https://translate-pa.googleapis.com/v1/translateHtml"
-        otft-content-type="application/json+protobuf"
-        otft-key-name="x-goog-api-key"
-        otft-key-value="VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
-        otft-max-number-of-text-nodes="8"
-        otft-path='"*"'
-        otft-payload='[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
-        otft-cache-id="abc123"
-        otft-cache-ttl="3600"
+        selected-theme=""" ++ asString attrs.selectedTheme ++ """
+        debug=""" ++ asString attrs.debug ++ """
+        otft-api-url=""" ++ asString attrs.otftApiUrl ++ """
+        otft-content-type=""" ++ asString attrs.otftContentType ++ """
+        otft-key-name=""" ++ asString attrs.otftKeyName ++ """
+        otft-key-value=""" ++ asString attrs.otftKeyValue ++ """
+        otft-max-number-of-text-nodes=""" ++ asString attrs.otftMaxNumberOfTextNodes ++ """
+        otft-path=""" ++ asString attrs.otftPath ++ """
+        otft-payload=""" ++ asString attrs.otftPayload ++ """
+        otft-cache-id=""" ++ asString attrs.otftCacheId ++ """
+        otft-cache-ttl=""" ++ asString attrs.otftCacheTtl ++ """
     >
     </r10-language-selector> """
 
@@ -227,19 +289,18 @@ extraEarlyAccess src =
     "<script src='" ++ src ++ """'></script>
     <script>
         __otft_earlyAccess(
-            { primaryColor: 'blue'
-            , borderRadius: '5'
-            , withDisclaimer: 'false'
-            , debug: 'true'
-            , otftApiUrl: 'https://translate-pa.googleapis.com/v1/translateHtml'
-            , otftContentType: 'application/json+protobuf'
-            , otftKeyName: 'x-goog-api-key'
-            , otftKeyValue: 'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN'
-            , otftMaxNumberOfTextNodes: '8'
-            , otftPath: '"*"'
-            , otftPayload:  '[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]'
-            , otftCacheId: null
-            , otftCacheTtl: '3600'
+            { primaryColor: """ ++ asString attrs.primaryColor ++ """
+            , withDisclaimer: """ ++ asString attrs.withDisclaimer ++ """
+            , debug: """ ++ asString attrs.debug ++ """
+            , otftApiUrl: """ ++ asString attrs.otftApiUrl ++ """
+            , otftContentType: """ ++ asString attrs.otftContentType ++ """
+            , otftKeyName: """ ++ asString attrs.otftKeyName ++ """
+            , otftKeyValue: """ ++ asString attrs.otftKeyValue ++ """
+            , otftMaxNumberOfTextNodes: """ ++ asString attrs.otftMaxNumberOfTextNodes ++ """
+            , otftPath: """ ++ asString attrs.otftPath ++ """
+            , otftPayload: """ ++ asString attrs.otftPayload ++ """
+            , otftCacheId: """ ++ asString attrs.otftCacheId ++ """
+            , otftCacheTtl: """ ++ asString attrs.otftCacheTtl ++ """
             }
         );
     </script> """
@@ -260,7 +321,7 @@ viewPage site meta =
     <header>
         <div id="top-header">
             <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " site.path ++ """</div>
-            """ ++ site.snippetTop ++ """
+            """ ++ site.snippetTop site.scriptSrc ++ """
         </div>
         <div id="sub-header">
             <h1>""" ++ meta.title ++ """</h1>
@@ -277,7 +338,7 @@ viewPage site meta =
         <p>""" ++ meta.sentence ++ """</p>
     </main>
     <footer></footer>
-    """ ++ site.snippetBottom ++ """
+    """ ++ site.snippetBottom site.scriptSrc ++ """
 </body>
 </html>"""
 
@@ -291,8 +352,8 @@ iif condition trueCase falseCase =
         falseCase
 
 
-css : String
-css =
+styleCss : String
+styleCss =
     """body 
     { font-family: sans-serif
     ; font-size: 1rem
