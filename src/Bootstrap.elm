@@ -49,60 +49,74 @@ type BuildScript
 port dataFromElmToJavascript : Json.Encode.Value -> Cmd msg
 
 
+type alias Site =
+    { path : String
+    , snippetBottom : String
+    , snippetMeta : String
+    , snippetTop : String
+    }
+
+
+sites : List Site
+sites =
+    [ { path = "site_1"
+      , snippetTop = ""
+      , snippetBottom = ""
+      , snippetMeta = ""
+      }
+    , { path = "site_2"
+      , snippetTop = extraCanonical srcPreCanonical
+      , snippetBottom = ""
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      }
+    , { path = "site_3"
+      , snippetTop = ""
+      , snippetBottom = extraEarlyAccess srcPreEarlyAccess
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      }
+    , { path = "site_4"
+      , snippetTop = extraCanonical srcLocalCanonical
+      , snippetBottom = ""
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      }
+    , { path = "site_5"
+      , snippetTop = ""
+      , snippetBottom = extraEarlyAccess srcLocalEarlyAccess
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      }
+    ]
+
+
 main_ : Flags -> Json.Encode.Value
 main_ flags =
+    let
+        pages_ : List ( String, String )
+        pages_ =
+            List.concat
+                (List.map
+                    (\site ->
+                        pages
+                            |> siteToPages site
+                    )
+                    sites
+                )
+
+        topPage_ =
+            ( "docs/index.html"
+            , topPage
+            )
+
+        css_ =
+            ( "docs/style.css"
+            , css
+            )
+    in
     Json.Encode.object
         [ ( "removeFolders"
           , Json.Encode.list Json.Encode.string []
           )
         , ( "addFiles"
-          , ((( "docs/index.html"
-              , topPage
-              )
-                :: (pages
-                        |> site
-                            { path = "site_1"
-                            , snippetTop = ""
-                            , snippetBottom = ""
-                            , snippetMeta = ""
-                            }
-                   )
-                ++ (pages
-                        |> site
-                            { path = "site_2"
-                            , snippetTop = extraCanonical srcPreCanonical
-                            , snippetBottom = ""
-                            , snippetMeta = snippetMetaGoogleNoTranslate
-                            }
-                   )
-                ++ (pages
-                        |> site
-                            { path = "site_3"
-                            , snippetTop = ""
-                            , snippetBottom = extraEarlyAccess srcPreEarlyAccess
-                            , snippetMeta = snippetMetaGoogleNoTranslate
-                            }
-                   )
-                ++ (pages
-                        |> site
-                            { path = "site_4"
-                            , snippetTop = extraCanonical srcLocalCanonical
-                            , snippetBottom = ""
-                            , snippetMeta = snippetMetaGoogleNoTranslate
-                            }
-                   )
-                ++ (pages
-                        |> site
-                            { path = "site_5"
-                            , snippetTop = ""
-                            , snippetBottom = extraEarlyAccess srcLocalEarlyAccess
-                            , snippetMeta = snippetMetaGoogleNoTranslate
-                            }
-                   )
-             )
-                |> List.map (Tuple.mapSecond Json.Encode.string)
-            )
-                |> Json.Encode.object
+          , Json.Encode.object (List.map (Tuple.mapSecond Json.Encode.string) (topPage_ :: css_ :: pages_))
           )
         ]
 
@@ -153,15 +167,8 @@ srcPreCanonical =
     "https://membership.rakuten-static.com/pre/ml/web-components.min.js"
 
 
-site :
-    { path : String
-    , snippetTop : String
-    , snippetBottom : String
-    , snippetMeta : String
-    }
-    -> Pages
-    -> List ( String, String )
-site args pages_ =
+siteToPages : Site -> Pages -> List ( String, String )
+siteToPages args pages_ =
     [ ( "docs/" ++ args.path ++ "/index.html"
       , viewPage args pages_.index
       )
@@ -238,29 +245,22 @@ extraEarlyAccess src =
     </script> """
 
 
-viewPage :
-    { path : String
-    , snippetTop : String
-    , snippetBottom : String
-    , snippetMeta : String
-    }
-    -> PageMeta
-    -> String
-viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
+viewPage : Site -> PageMeta -> String
+viewPage site meta =
     """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    """ ++ snippetMeta ++ """
+    """ ++ site.snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>""" ++ meta.title ++ " - " ++ path ++ """</title>
+    <title>""" ++ meta.title ++ " - " ++ site.path ++ """</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <header>
         <div id="top-header">
-            <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " path ++ """</div>
-            """ ++ snippetTop ++ """
+            <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " site.path ++ """</div>
+            """ ++ site.snippetTop ++ """
         </div>
         <div id="sub-header">
             <h1>""" ++ meta.title ++ """</h1>
@@ -277,7 +277,7 @@ viewPage { path, snippetTop, snippetBottom, snippetMeta } meta =
         <p>""" ++ meta.sentence ++ """</p>
     </main>
     <footer></footer>
-    """ ++ snippetBottom ++ """
+    """ ++ site.snippetBottom ++ """
 </body>
 </html>"""
 
@@ -289,3 +289,62 @@ iif condition trueCase falseCase =
 
     else
         falseCase
+
+
+css : String
+css =
+    """body 
+    { font-family: sans-serif
+    ; font-size: 1rem
+    ; margin: 1rem
+    }
+
+ul 
+    { line-height: 2rem
+    }
+
+.small 
+    { font-size: 0.8rem
+    }
+
+#home-icon
+    { font-size: 1.5rem
+    ; font-weight: bold
+    ; text-decoration: none
+    }
+    
+
+#top-header   
+    { display: flex
+    ; align-items: center
+    ; width: fill
+    ; justify-content: space-between
+    ; border-bottom: 1px solid rgba(0, 0, 0, 0.2)
+    ; padding-bottom: 0.5rem
+    }
+    
+nav > ul 
+    { display: flex;
+    ; align-items: center
+    ; list-style-type: none
+    ; margin: 0
+    ; padding: 0
+    ; gap: 0.4rem
+    ; font-size: 0.9rem
+    }
+    
+nav > ul > li
+    { border: 1px solid rgba(0, 0, 0, 0.2)
+    ; background-color: rgba(0, 0, 0, 0.05)
+    ; text-decoration: none
+    ; padding: 0 0.4rem
+    ; margin: 0
+    }    
+
+nav > ul > li > a
+    { text-decoration: none
+    }    
+    
+main
+    { line-height: 1.8rem
+    }"""
