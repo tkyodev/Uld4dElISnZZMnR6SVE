@@ -103,6 +103,20 @@ sites =
       , scriptSrc = srcPreCanonical
       , name = "Wovn (WIP)"
       }
+    , { path = "crowdin"
+      , snippetTop = extraCanonical
+      , snippetBottom = \_ -> ""
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcPreCanonical
+      , name = "Crowdin (WIP)"
+      }
+    , { path = "shutto"
+      , snippetTop = extraCanonical
+      , snippetBottom = \_ -> ""
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcPreCanonical
+      , name = "Shutto (WIP)"
+      }
     ]
 
 
