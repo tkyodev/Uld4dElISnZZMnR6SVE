@@ -61,40 +61,47 @@ type alias Site =
 
 sites : List Site
 sites =
-    [ { path = "site_1"
+    [ { path = "plain"
       , snippetTop = \_ -> ""
       , snippetBottom = \_ -> ""
       , snippetMeta = ""
       , scriptSrc = ""
       , name = "Plain"
       }
-    , { path = "site_2"
+    , { path = "canonical"
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreCanonical
       , name = "Canonical"
       }
-    , { path = "site_3"
+    , { path = "early-access"
       , snippetTop = \_ -> ""
       , snippetBottom = extraEarlyAccess
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreEarlyAccess
       , name = "Early-Access"
       }
-    , { path = "site_4"
+    , { path = "canonical_dev"
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcLocalCanonical
       , name = "Canonical (DEV)"
       }
-    , { path = "site_5"
+    , { path = "early_access_dev"
       , snippetTop = \_ -> ""
       , snippetBottom = extraEarlyAccess
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcLocalEarlyAccess
       , name = "Early-Access (DEV)"
+      }
+    , { path = "wovn"
+      , snippetTop = extraCanonical
+      , snippetBottom = \_ -> ""
+      , snippetMeta = snippetMetaGoogleNoTranslate
+      , scriptSrc = srcPreCanonical
+      , name = "Wovn (WIP)"
       }
     ]
 
@@ -154,17 +161,25 @@ indexHtml =
 
 siteMenuLine : Site -> String
 siteMenuLine site =
+    let
+        script =
+            if String.isEmpty site.scriptSrc then
+                ""
+
+            else
+                " - <a class='small' target='_blank' href='"
+                    ++ site.scriptSrc
+                    ++ "'>"
+                    ++ site.scriptSrc
+                    ++ "</a>"
+    in
     "<li><a href='"
         ++ site.path
         ++ "/index.html'>"
-        ++ String.replace "_" " " site.path
-        ++ """</a> """
         ++ site.name
-        ++ " <a class='small' target='_blank' href='"
-        ++ site.scriptSrc
-        ++ "'>"
-        ++ site.scriptSrc
-        ++ "</a></li>"
+        ++ "</a>"
+        ++ script
+        ++ "</li>"
 
 
 snippetMetaGoogleNoTranslate : String
@@ -227,9 +242,14 @@ type alias Pages =
     }
 
 
-asString : String -> String
-asString string =
+asStringForJavaScript : String -> String
+asStringForJavaScript string =
     Json.Encode.encode 0 <| Json.Encode.string string
+
+
+asStringForHtml : String -> String
+asStringForHtml string =
+    "\"" ++ String.replace "\"" "&quot;" string ++ "\""
 
 
 attrs :
@@ -257,7 +277,7 @@ attrs =
     , otftKeyName = "x-goog-api-key"
     , otftKeyValue = "VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN"
     , otftMaxNumberOfTextNodes = "8"
-    , otftPath = asString "*"
+    , otftPath = "\"*\""
     , otftPayload = """[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]"""
     , otftCacheId = "abc123"
     , otftCacheTtl = "3600"
@@ -268,17 +288,17 @@ extraCanonical : String -> String
 extraCanonical src =
     "<script src='" ++ src ++ """' async></script>
     <r10-language-selector
-        selected-theme=""" ++ asString attrs.selectedTheme ++ """
-        debug=""" ++ asString attrs.debug ++ """
-        otft-api-url=""" ++ asString attrs.otftApiUrl ++ """
-        otft-content-type=""" ++ asString attrs.otftContentType ++ """
-        otft-key-name=""" ++ asString attrs.otftKeyName ++ """
-        otft-key-value=""" ++ asString attrs.otftKeyValue ++ """
-        otft-max-number-of-text-nodes=""" ++ asString attrs.otftMaxNumberOfTextNodes ++ """
-        otft-path=""" ++ asString attrs.otftPath ++ """
-        otft-payload=""" ++ asString attrs.otftPayload ++ """
-        otft-cache-id=""" ++ asString attrs.otftCacheId ++ """
-        otft-cache-ttl=""" ++ asString attrs.otftCacheTtl ++ """
+        selected-theme=""" ++ asStringForHtml attrs.selectedTheme ++ """
+        debug=""" ++ asStringForHtml attrs.debug ++ """
+        otft-api-url=""" ++ asStringForHtml attrs.otftApiUrl ++ """
+        otft-content-type=""" ++ asStringForHtml attrs.otftContentType ++ """
+        otft-key-name=""" ++ asStringForHtml attrs.otftKeyName ++ """
+        otft-key-value=""" ++ asStringForHtml attrs.otftKeyValue ++ """
+        otft-max-number-of-text-nodes=""" ++ asStringForHtml attrs.otftMaxNumberOfTextNodes ++ """
+        otft-path=""" ++ asStringForHtml attrs.otftPath ++ """
+        otft-payload=""" ++ asStringForHtml attrs.otftPayload ++ """
+        otft-cache-id=""" ++ asStringForHtml attrs.otftCacheId ++ """
+        otft-cache-ttl=""" ++ asStringForHtml attrs.otftCacheTtl ++ """
     >
     </r10-language-selector> """
 
@@ -289,18 +309,18 @@ extraEarlyAccess src =
     "<script src='" ++ src ++ """'></script>
     <script>
         __otft_earlyAccess(
-            { primaryColor: """ ++ asString attrs.primaryColor ++ """
-            , withDisclaimer: """ ++ asString attrs.withDisclaimer ++ """
-            , debug: """ ++ asString attrs.debug ++ """
-            , otftApiUrl: """ ++ asString attrs.otftApiUrl ++ """
-            , otftContentType: """ ++ asString attrs.otftContentType ++ """
-            , otftKeyName: """ ++ asString attrs.otftKeyName ++ """
-            , otftKeyValue: """ ++ asString attrs.otftKeyValue ++ """
-            , otftMaxNumberOfTextNodes: """ ++ asString attrs.otftMaxNumberOfTextNodes ++ """
-            , otftPath: """ ++ asString attrs.otftPath ++ """
-            , otftPayload: """ ++ asString attrs.otftPayload ++ """
-            , otftCacheId: """ ++ asString attrs.otftCacheId ++ """
-            , otftCacheTtl: """ ++ asString attrs.otftCacheTtl ++ """
+            { primaryColor: """ ++ asStringForJavaScript attrs.primaryColor ++ """
+            , withDisclaimer: """ ++ asStringForJavaScript attrs.withDisclaimer ++ """
+            , debug: """ ++ asStringForJavaScript attrs.debug ++ """
+            , otftApiUrl: """ ++ asStringForJavaScript attrs.otftApiUrl ++ """
+            , otftContentType: """ ++ asStringForJavaScript attrs.otftContentType ++ """
+            , otftKeyName: """ ++ asStringForJavaScript attrs.otftKeyName ++ """
+            , otftKeyValue: """ ++ asStringForJavaScript attrs.otftKeyValue ++ """
+            , otftMaxNumberOfTextNodes: """ ++ asStringForJavaScript attrs.otftMaxNumberOfTextNodes ++ """
+            , otftPath: """ ++ asStringForJavaScript attrs.otftPath ++ """
+            , otftPayload: """ ++ asStringForJavaScript attrs.otftPayload ++ """
+            , otftCacheId: """ ++ asStringForJavaScript attrs.otftCacheId ++ """
+            , otftCacheTtl: """ ++ asStringForJavaScript attrs.otftCacheTtl ++ """
             }
         );
     </script> """
@@ -314,13 +334,13 @@ viewPage site meta =
     <meta charset="UTF-8">
     """ ++ site.snippetMeta ++ """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>""" ++ meta.title ++ " - " ++ site.path ++ """</title>
+    <title>""" ++ meta.title ++ " - " ++ site.name ++ """</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <header>
         <div id="top-header">
-            <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " site.path ++ """</div>
+            <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " site.name ++ """</div>
             """ ++ site.snippetTop site.scriptSrc ++ """
         </div>
         <div id="sub-header">
