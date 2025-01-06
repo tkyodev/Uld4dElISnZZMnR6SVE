@@ -72,15 +72,15 @@ sites =
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcPreCanonical
+      , scriptSrc = srcPreprodCanonical
       , name = "Canonical"
       }
-    , { path = "early-access"
+    , { path = "bookmarklet"
       , snippetTop = \_ -> ""
-      , snippetBottom = extraEarlyAccess
+      , snippetBottom = extraBookmarklet
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcPreEarlyAccess
-      , name = "Early-Access"
+      , scriptSrc = srcPreprodBookmarklet
+      , name = "Bookmarklet"
       }
     , { path = "canonical_dev"
       , snippetTop = extraCanonical
@@ -89,32 +89,32 @@ sites =
       , scriptSrc = srcLocalCanonical
       , name = "Canonical (DEV)"
       }
-    , { path = "early_access_dev"
+    , { path = "bookmarklet_dev"
       , snippetTop = \_ -> ""
-      , snippetBottom = extraEarlyAccess
+      , snippetBottom = extraBookmarklet
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcLocalEarlyAccess
-      , name = "Early-Access (DEV)"
+      , scriptSrc = srcLocalBookmarklet
+      , name = "Bookmarklet (DEV)"
       }
     , { path = "wovn"
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcPreCanonical
+      , scriptSrc = srcPreprodCanonical
       , name = "Wovn (WIP)"
       }
     , { path = "crowdin"
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcPreCanonical
+      , scriptSrc = srcPreprodCanonical
       , name = "Crowdin (WIP)"
       }
     , { path = "shutto"
       , snippetTop = extraCanonical
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
-      , scriptSrc = srcPreCanonical
+      , scriptSrc = srcPreprodCanonical
       , name = "Shutto (WIP)"
       }
     ]
@@ -201,8 +201,8 @@ snippetMetaGoogleNoTranslate =
     """<meta name="google" content="notranslate">"""
 
 
-srcLocalEarlyAccess : String
-srcLocalEarlyAccess =
+srcLocalBookmarklet : String
+srcLocalBookmarklet =
     "http://127.0.0.1:8080/otft-early-access.min.js"
 
 
@@ -211,13 +211,13 @@ srcLocalCanonical =
     "http://127.0.0.1:8080/web-components.min.js"
 
 
-srcPreEarlyAccess : String
-srcPreEarlyAccess =
+srcPreprodBookmarklet : String
+srcPreprodBookmarklet =
     "https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js"
 
 
-srcPreCanonical : String
-srcPreCanonical =
+srcPreprodCanonical : String
+srcPreprodCanonical =
     "https://membership.rakuten-static.com/pre/ml/web-components.min.js"
 
 
@@ -317,27 +317,31 @@ extraCanonical src =
     </r10-language-selector> """
 
 
-extraEarlyAccess : String -> String
-extraEarlyAccess src =
+extraBookmarklet : String -> String
+extraBookmarklet src =
     -- http://127.0.0.1:8080/otft-early-access.min.js
-    "<script src='" ++ src ++ """'></script>
-    <script>
-        __otft_earlyAccess(
-            { primaryColor: """ ++ asStringForJavaScript attrs.primaryColor ++ """
-            , withDisclaimer: """ ++ asStringForJavaScript attrs.withDisclaimer ++ """
-            , debug: """ ++ asStringForJavaScript attrs.debug ++ """
-            , otftApiUrl: """ ++ asStringForJavaScript attrs.otftApiUrl ++ """
-            , otftContentType: """ ++ asStringForJavaScript attrs.otftContentType ++ """
-            , otftKeyName: """ ++ asStringForJavaScript attrs.otftKeyName ++ """
-            , otftKeyValue: """ ++ asStringForJavaScript attrs.otftKeyValue ++ """
-            , otftMaxNumberOfTextNodes: """ ++ asStringForJavaScript attrs.otftMaxNumberOfTextNodes ++ """
-            , otftPath: """ ++ asStringForJavaScript attrs.otftPath ++ """
-            , otftPayload: """ ++ asStringForJavaScript attrs.otftPayload ++ """
-            , otftCacheId: """ ++ asStringForJavaScript attrs.otftCacheId ++ """
-            , otftCacheTtl: """ ++ asStringForJavaScript attrs.otftCacheTtl ++ """
+    """<script>
+        document.head.appendChild(Object.assign(document.createElement('script'), 
+            { src: '""" ++ src ++ """'
+            , onload: () => {
+                __otft_earlyAccess(
+                    { debug: """ ++ asStringForJavaScript attrs.debug ++ """
+                    , primaryColor: """ ++ asStringForJavaScript attrs.primaryColor ++ """
+                    , supportedLanguages: 'ja, en, zh-Hant, zh-Hans, ko'
+                    , borderRadius: '5'
+                    , withDisclaimer: """ ++ asStringForJavaScript attrs.withDisclaimer ++ """
+                    , otftApiUrl: """ ++ asStringForJavaScript attrs.otftApiUrl ++ """
+                    , otftContentType: """ ++ asStringForJavaScript attrs.otftContentType ++ """
+                    , otftKeyName: """ ++ asStringForJavaScript attrs.otftKeyName ++ """
+                    , otftKeyValue: """ ++ asStringForJavaScript attrs.otftKeyValue ++ """
+                    , otftMaxNumberOfTextNodes: """ ++ asStringForJavaScript attrs.otftMaxNumberOfTextNodes ++ """
+                    , otftPath: """ ++ asStringForJavaScript attrs.otftPath ++ """
+                    , otftPayload: """ ++ asStringForJavaScript attrs.otftPayload ++ """
+                    }
+                )
             }
-        );
-    </script> """
+        }));
+    </script>"""
 
 
 viewPage : Site -> PageMeta -> String
@@ -371,7 +375,6 @@ viewPage site meta =
     <main>
         <p>""" ++ meta.sentence ++ """</p>
     </main>
-    <footer></footer>
     """ ++ site.snippetBottom site.scriptSrc ++ """
 </body>
 </html>"""
