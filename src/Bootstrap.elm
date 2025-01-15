@@ -301,20 +301,20 @@ attrs =
 extraCanonical : String -> String -> String
 extraCanonical commit src =
     "<script src='" ++ src ++ "?" ++ commit ++ """' async></script>
-        <r10-language-selector
-            selected-theme=""" ++ asStringForHtml attrs.selectedTheme ++ """
-            debug=""" ++ asStringForHtml attrs.debug ++ """
-            otft-api-url=""" ++ asStringForHtml attrs.otftApiUrl ++ """
-            otft-content-type=""" ++ asStringForHtml attrs.otftContentType ++ """
-            otft-key-name=""" ++ asStringForHtml attrs.otftKeyName ++ """
-            otft-key-value=""" ++ asStringForHtml attrs.otftKeyValue ++ """
-            otft-max-number-of-text-nodes=""" ++ asStringForHtml attrs.otftMaxNumberOfTextNodes ++ """
-            otft-path=""" ++ asStringForHtml attrs.otftPath ++ """
-            otft-payload=""" ++ asStringForHtml attrs.otftPayload ++ """
-            otft-cache-id=""" ++ asStringForHtml attrs.otftCacheId ++ """
-            otft-cache-ttl=""" ++ asStringForHtml attrs.otftCacheTtl ++ """
-        >
-        </r10-language-selector> """
+            <r10-language-selector
+                selected-theme=""" ++ asStringForHtml attrs.selectedTheme ++ """
+                debug=""" ++ asStringForHtml attrs.debug ++ """
+                otft-api-url=""" ++ asStringForHtml attrs.otftApiUrl ++ """
+                otft-content-type=""" ++ asStringForHtml attrs.otftContentType ++ """
+                otft-key-name=""" ++ asStringForHtml attrs.otftKeyName ++ """
+                otft-key-value=""" ++ asStringForHtml attrs.otftKeyValue ++ """
+                otft-max-number-of-text-nodes=""" ++ asStringForHtml attrs.otftMaxNumberOfTextNodes ++ """
+                otft-path=""" ++ asStringForHtml attrs.otftPath ++ """
+                otft-payload=""" ++ asStringForHtml attrs.otftPayload ++ """
+                otft-cache-id=""" ++ asStringForHtml attrs.otftCacheId ++ """
+                otft-cache-ttl=""" ++ asStringForHtml attrs.otftCacheTtl ++ """
+            >
+            </r10-language-selector> """
 
 
 extraBookmarklet : String -> String -> String
@@ -359,8 +359,8 @@ viewPage site meta =
     <header>
         <div id="top-header">
             <div><a id="home-icon" href="..">⌂</a> ❯ """ ++ String.replace "_" " " site.name ++ """</div>
+            """ ++ site.snippetTop site.scriptSrc ++ """
         </div>
-        """ ++ site.snippetTop site.scriptSrc ++ """
         <div id="sub-header">
             <h1>""" ++ meta.title ++ """</h1>
             <nav>
