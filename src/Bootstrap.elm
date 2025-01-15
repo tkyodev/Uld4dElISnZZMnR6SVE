@@ -59,8 +59,8 @@ type alias Site =
     }
 
 
-sites : List Site
-sites =
+sites : String -> List Site
+sites commit =
     [ { path = "plain"
       , snippetTop = \_ -> ""
       , snippetBottom = \_ -> ""
@@ -69,7 +69,7 @@ sites =
       , name = "Plain"
       }
     , { path = "canonical"
-      , snippetTop = extraCanonical
+      , snippetTop = extraCanonical commit
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodCanonical
@@ -77,13 +77,13 @@ sites =
       }
     , { path = "bookmarklet"
       , snippetTop = \_ -> ""
-      , snippetBottom = extraBookmarklet
+      , snippetBottom = extraBookmarklet commit
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodBookmarklet
       , name = "Bookmarklet"
       }
     , { path = "canonical_dev"
-      , snippetTop = extraCanonical
+      , snippetTop = extraCanonical commit
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcLocalCanonical
@@ -91,27 +91,27 @@ sites =
       }
     , { path = "bookmarklet_dev"
       , snippetTop = \_ -> ""
-      , snippetBottom = extraBookmarklet
+      , snippetBottom = extraBookmarklet commit
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcLocalBookmarklet
       , name = "Bookmarklet (DEV)"
       }
     , { path = "wovn"
-      , snippetTop = extraCanonical
+      , snippetTop = extraCanonical commit
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodCanonical
       , name = "Wovn (WIP)"
       }
     , { path = "crowdin"
-      , snippetTop = extraCanonical
+      , snippetTop = extraCanonical commit
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodCanonical
       , name = "Crowdin (WIP)"
       }
     , { path = "shutto"
-      , snippetTop = extraCanonical
+      , snippetTop = extraCanonical commit
       , snippetBottom = \_ -> ""
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodCanonical
@@ -133,13 +133,13 @@ main_ flags =
             List.concat
                 (List.map
                     siteToPages
-                    sites
+                    (sites flags.commit)
                 )
 
         topPage : ( String, String )
         topPage =
             ( folder ++ "index.html"
-            , indexHtml
+            , indexHtml flags.commit
             )
 
         style : ( String, String )
@@ -158,8 +158,8 @@ main_ flags =
         ]
 
 
-indexHtml : String
-indexHtml =
+indexHtml : String -> String
+indexHtml commit =
     """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,7 +168,7 @@ indexHtml =
     <title>Top</title>
     <link rel="stylesheet" href="style.css"></head>
 <body>
-    <ul>""" ++ String.join "" (List.map (\site -> siteMenuLine site) sites) ++ """</ul>
+    <ul>""" ++ String.join "" (List.map (\site -> siteMenuLine site) (sites commit)) ++ """</ul>
 </body>
 </html>"""
 
@@ -298,9 +298,9 @@ attrs =
     }
 
 
-extraCanonical : String -> String
-extraCanonical src =
-    "<script src='" ++ src ++ """' async></script>
+extraCanonical : String -> String -> String
+extraCanonical commit src =
+    "<script src='" ++ src ++ "?" ++ commit ++ """' async></script>
     <r10-language-selector
         selected-theme=""" ++ asStringForHtml attrs.selectedTheme ++ """
         debug=""" ++ asStringForHtml attrs.debug ++ """
@@ -317,12 +317,12 @@ extraCanonical src =
     </r10-language-selector> """
 
 
-extraBookmarklet : String -> String
-extraBookmarklet src =
+extraBookmarklet : String -> String -> String
+extraBookmarklet commit src =
     -- http://127.0.0.1:8080/otft-early-access.min.js
     """<script>
         document.head.appendChild(Object.assign(document.createElement('script'), 
-            { src: '""" ++ src ++ """'
+            { src: '""" ++ src ++ "?" ++ commit ++ """'
             , onload: () => {
                 __otft_earlyAccess(
                     { debug: """ ++ asStringForJavaScript attrs.debug ++ """
