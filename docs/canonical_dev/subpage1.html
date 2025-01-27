@@ -11,7 +11,12 @@
     <header>
         <div id="top-header">
             <div><a id="home-icon" href="..">⌂</a> ❯ Canonical (DEV)</div>
-            <script src='http://127.0.0.1:8080/web-components.min.js?27cf917' async></script>
+            <script>
+                const script = document.createElement('script');
+                script.src = 'http://127.0.0.1:8080/web-components.min.js?nocache=' + Math.random();
+                script.async = true;
+                document.head.appendChild(script);
+            </script>
             <r10-language-selector
                 selected-theme="light"
                 debug="true"

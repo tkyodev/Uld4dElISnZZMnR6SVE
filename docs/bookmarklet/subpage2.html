@@ -28,8 +28,9 @@
         <p>状態を持たない数学的な関数は、並列処理を実現するのに適している。</p>
     </main>
     <script>
-        document.head.appendChild(Object.assign(document.createElement('script'), 
-            { src: 'https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js?27cf917'
+        document.head.appendChild(Object.assign(document.createElement('script'),
+            { src: 'https://membership.rakuten-static.com/pre/ml/otft-early-access.min.js?nocache=' + Math.random()
+            , async: true
             , onload: () => {
                 __otft_earlyAccess(
                     { debug: "true"

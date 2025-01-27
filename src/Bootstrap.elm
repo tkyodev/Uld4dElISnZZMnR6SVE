@@ -300,7 +300,12 @@ attrs =
 
 extraCanonical : String -> String -> String
 extraCanonical commit src =
-    "<script src='" ++ src ++ "?" ++ commit ++ """' async></script>
+    """<script>
+                const script = document.createElement('script');
+                script.src = '""" ++ src ++ """?nocache=' + Math.random();
+                script.async = true;
+                document.head.appendChild(script);
+            </script>
             <r10-language-selector
                 selected-theme=""" ++ asStringForHtml attrs.selectedTheme ++ """
                 debug=""" ++ asStringForHtml attrs.debug ++ """
@@ -321,8 +326,9 @@ extraBookmarklet : String -> String -> String
 extraBookmarklet commit src =
     -- http://127.0.0.1:8080/otft-early-access.min.js
     """<script>
-        document.head.appendChild(Object.assign(document.createElement('script'), 
-            { src: '""" ++ src ++ "?" ++ commit ++ """'
+        document.head.appendChild(Object.assign(document.createElement('script'),
+            { src: '""" ++ src ++ """?nocache=' + Math.random()
+            , async: true
             , onload: () => {
                 __otft_earlyAccess(
                     { debug: """ ++ asStringForJavaScript attrs.debug ++ """

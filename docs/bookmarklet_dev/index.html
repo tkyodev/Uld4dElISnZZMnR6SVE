@@ -28,8 +28,9 @@
         <p>参照透過性とは、同じ値を与えたら返り値も必ず同じになるような性質である。</p>
     </main>
     <script>
-        document.head.appendChild(Object.assign(document.createElement('script'), 
-            { src: 'http://127.0.0.1:8080/otft-early-access.min.js?27cf917'
+        document.head.appendChild(Object.assign(document.createElement('script'),
+            { src: 'http://127.0.0.1:8080/otft-early-access.min.js?nocache=' + Math.random()
+            , async: true
             , onload: () => {
                 __otft_earlyAccess(
                     { debug: "true"
