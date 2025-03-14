@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <title>Tester Empty</title>
+    <style>
+      body {
+        margin: 1rem;
+        font-family: sans-serif;
+        background-color: white;
+        color: black;
+      }
+
+      .a {font-size: 30px; background-color: yellow}
+
+      .b {color: #2b2}
+
+      .c {color: red}
+    </style>
+  </head>
+
+  <body>
+    孤立した HTML 要素
+    <p><span class="a">この</span><a href="https://example.com" class="b">ページ</a><span class="c">を読んでください。</span></p>
+    <p><span class="a">この<a href="https://example.com" class="b">メモ</a></span><span class="c">を読んでください。</span></p>
+    <div class="notranslate">このテキストは翻訳されません (This text will NOT be translated)
+        <div class="translate">これは翻訳されます
+            <div class="notranslate">このテキストは翻訳されません (This text will NOT be translated)</div>
+        </div>
+    </div>
+    <p><span>バナナ、</span><span>オレンジ、</span><span>リンゴ、</span><span>パイナップル、</span><span>ブドウ</span></p>
+    <p>テキスト要素は1つだけ</p>
+    <script>
+        // document.head.appendChild(Object.assign(document.createElement('script'),{ src:'http://127.0.0.1:8080/otft-early-access.min.js', onload:()=>{__otft_earlyAccess({ debug:'true', primaryColor:'pink', borderRadius:'5', withDisclaimer:'true', otftApiUrl:'https://translate-pa.googleapis.com/v1/translateHtml', otftContentType:'application/json+protobuf', otftKeyName:'x-goog-api-key', otftKeyValue:'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN', otftMaxNumberOfTextNodes:'4', otftPath:'"*"', otftPayload:'[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]' })}}));
+
+        // document.head.appendChild(Object.assign(document.createElement('script'),{ src:'file:../build-wc/otft-early-access.min.js', onload:()=>{__otft_earlyAccess({ debug:'true', primaryColor:'pink', borderRadius:'5', withDisclaimer:'true', otftApiUrl:'https://translate-pa.googleapis.com/v1/translateHtml', otftContentType:'application/json+protobuf', otftKeyName:'x-goog-api-key', otftKeyValue:'VeBRlQYFma2pXUMRFRIVUUiNGcxBTSoVGM2dFRI12T1IDMBlkehN', otftMaxNumberOfTextNodes:'4', otftPath:'"*"', otftPayload:'[[[{{data}}],"{{source}}","{{target}}"],"te_lib"]' })}}));
+    </script>
+  </body>
+</html> 

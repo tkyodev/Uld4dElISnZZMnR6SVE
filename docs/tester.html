@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <title>Tester</title>
+    <style>
+      body {
+        margin: 1rem;
+        font-family: sans-serif;
+        background-color: white;
+        color: black;
+      }
+
+      /* Dark mode styles */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: black;
+          color: white;
+        }
+      }
+
+      ul {
+        padding-left: 0.8rem;
+        font-family: monospace;
+        font-size: 0.8rem;
+      }
+
+      ol {
+        line-height: 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      h1 {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+      }
+
+      :root {
+        --spacing: 1rem;
+      }
+
+      r10-language-disclaimer {
+        position: fixed;
+        top: calc(var(--spacing) * 3);
+        right: var(--spacing);
+        margin-left: var(--spacing);
+      }
+
+      r10-language-selector {
+        display: inline-block;
+      }
+
+      .a {font-size: 30px; background-color: yellow}
+
+      .b {color: #2b2}
+
+      .c {color: red}
+    </style>
+  </head>
+
+  <body>
+    <h1 id="test-name">Test not loaded yet</h1>
+    <r10-language-selector></r10-language-selector>
+    <div id="html-to-test-otft" style="display: none">
+        <p><span class="a">この</span><a href="https://example.com" class="b">ページ</a><span class="c">を読んでください。</span></p>
+        <p><span class="a">この<a href="https://example.com" class="b">メモ</a></span><span class="c">を読んでください。</span></p>
+        <div class="notranslate">このテキストは翻訳されません (This text will NOT be translated)
+            <div class="translate">これは翻訳されます
+                <div class="notranslate">このテキストは翻訳されません (This text will NOT be translated)</div>
+            </div>
+        </div>
+        <p><span>バナナ、</span><span>オレンジ、</span><span>リンゴ、</span><span>パイナップル、</span><span>ブドウ</span></p>
+        <p>テキスト要素は1つだけ</p>
+    </div>
+    <r10-language-disclaimer></r10-language-disclaimer>
+    <div id="query-params-container" style="overflow-wrap: break-word"></div>
+    <script src="GENERATED-test-list.js"></script>
+    <script>
+      const currentUrlObj = new URL(location.href);
+      const temp = new URLSearchParams(currentUrlObj.search);
+      const queryParamsOriginal = {};
+      const queryParamsForRedirects = {};
+      const queryParamsForAttributes = {};
+      temp.forEach((value, key) => {
+        queryParamsOriginal[key] = value;
+        queryParamsForRedirects[key] = value;
+        queryParamsForAttributes[key] = value;
+      });
+      if (queryParamsOriginal["otft-api-url"] && queryParamsOriginal["otft-api-url"] !== "") {
+        // We switch to OTFT testing mode
+        document.getElementById('html-to-test-otft').style.display = 'block';
+        document.getElementById('query-params-container').style.display = 'none';
+      } 
+      // Transforming back "lang='ja'" to "lang={{lang}}"
+      // Is this really needed?
+      queryParamsForRedirects["lang"] = "{{lang}}";
+      //
+      // There is another bug about {{lang}}. If we specify a different cookie
+      // with "rlang={{lang}}; path=/; max-age=7776000; quantity=4",
+      // it will be, after the redirect, replaced with
+      // "rlang=en; path=/; max-age=7776000; quantity=4", for example.
+      // This is because this string goes into the "redirects" value,
+      // and it get automatically replaces with the language.
+      // So probably in this case, needed to test cookies, is necessary to use
+      // "prevent-default".
+      //
+      delete queryParamsForRedirects["clear-local-storage"];
+      delete queryParamsForAttributes["clear-local-storage"];
+      delete queryParamsForAttributes["lang"];
+      const queryParamsForRedirectsObj = new URLSearchParams(
+        queryParamsForRedirects
+      );
+      queryParamsForAttributes["redirects"] = decodeURIComponent(
+        `?${queryParamsForRedirectsObj.toString()}`
+      ).replace(",", "{{,}}");
+
+      // Getting the current language from the local storage and setting it
+      // in <html lang='xyz'>, as this value is used by the Language Selector.
+      //
+      // `lang-force` can be used to overwrite the langauge coming from the
+      // local storage, if needed.
+      //
+      var lang = queryParamsOriginal["lang-force"] || localStorage.getItem("r10-lang") || queryParamsOriginal["lang"] || "en";
+      if (lang) {
+        document.documentElement.setAttribute("lang", lang);
+        queryParamsForAttributes["selected-language"] = lang;
+      }
+
+      // Replace `navigator.languages` with the new values.
+      // `navigator.languages` cannot be passed by attributes to the Language Selector.
+      // The Language Selector always read this from `navigator.languages` directly
+      // and it is passed as a flag into the Elm code.
+      var languagesArray = queryParamsOriginal["navigator.languages"]
+        ? queryParamsOriginal["navigator.languages"].split(",")
+        : ["en"];
+      Object.defineProperty(navigator, "languages", {
+        get: function () {
+          return languagesArray;
+        },
+      });
+
+      // Updating components
+      const languageSelector = document.querySelector("r10-language-selector");
+      const languageDisclaimer = document.querySelector(
+        "r10-language-disclaimer"
+      );
+      for (const [key, value] of Object.entries(queryParamsForAttributes)) {
+        if (languageSelector) {
+          languageSelector.setAttribute(key, value);
+        }
+        if (languageDisclaimer) {
+          languageDisclaimer.setAttribute(key, value);
+        }
+      }
+
+      let html = `<ul>
+            <li><strong>Page language:</strong> ${lang}</li>
+            <li><strong>navigator.languages:</strong> ${JSON.stringify(
+              navigator.languages
+            )}</li>
+            <li><strong>localStorage.r10-lang:</strong> ${localStorage.getItem(
+              "r10-lang"
+            )}</li>
+            <li><strong>localStorage.r10-notified-on:</strong> ${
+              localStorage.getItem("r10-notified-on") ? "defined" : "null"
+            }</li>
+            <li><strong>localStorage.r10-recent-lang-change:</strong> ${
+              localStorage.getItem("r10-recent-lang-change")
+                ? "defined"
+                : "null"
+            }</li>
+            `;
+      for (const [key, value] of Object.entries(queryParamsOriginal)) {
+        html += `<li><strong>param.${key}:</strong> ${value}</li>`;
+      }
+      html += '</ul><div class="hide-during-diffing"><h3>Test links</h3><ol>';
+      const allDisclaimers = `disclaimer-japan-only&disclaimer-base&disclaimer-partially-translated-including-cs&service-name=XYZ`;
+
+      Object.entries(data).forEach(([testName, url]) => {
+        html += `<li><a class="clear-local-storage" href=?${url}&testName=${encodeURIComponent(
+          testName
+        )}>${testName}</a></li>`;
+      });
+
+      html += "</ol></div>";
+      document.getElementById("query-params-container").innerHTML = html;
+      document.getElementById("test-name").innerText =
+        queryParamsOriginal["testName"] || "Test name not available";
+      const linksInDom = document.querySelectorAll(".clear-local-storage");
+
+      // Add click event listener to each link
+      linksInDom.forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          localStorage.clear();
+        });
+      });
+    </script>
+
+    <script>
+                const script = document.createElement('script');
+                script.src = 'https://membership.rakuten-static.com/pre/ml/web-components.min.js?nocache=' + Math.random();
+                script.async = true;
+                document.head.appendChild(script);
+            </script> 
+
+    <!-- <script src="../public/js/global.js"></script>
+    <script src="../public/temp/GENERATED-meta-internal.js"></script>
+    <script src="../public/temp/GENERATED-elm-web-components.js"></script>
+    <script src="../public/js/thin-wrapper.js"></script>
+    <script src="../public/js/_OTFT_debug.js"></script>
+    <script src="../public/js/_OTFT_db.js"></script>
+    <script src="../public/js/_OTFT_internal-translations.js"></script>
+    <script src="../public/js/_OTFT_minification.js"></script>
+    <script src="../public/js/_OTFT_fetch-translations.js"></script>
+    <script src="../public/js/_OTFT_translate.js"></script>
+    <script src="../public/js/_OTFT_inject-components.js"></script>
+    <script src="../public/js/_OTFT_early-access.js"></script>
+    <script src="../public/js/arranges-debuggers-side-by-side.js"></script> -->
+
+  </body>
+</html> 

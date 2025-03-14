@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <title>テキスト 0.1</title>
+    <meta name="description" content="テキスト 0.2">
+    <meta name="keywords" content="テキスト 0.3">
+    <meta name="twitter:title" content="テキスト 0.4">
+    <meta name="twitter:description" content="テキスト 0.5">
+    <meta property="og:title" content="テキスト 0.6">
+    <meta property="og:description" content="テキスト 0.7">
+    <meta property="og:site_name" content="テキスト 0.8">
+    <style>
+    body, select {font-family: monospace; font-size: 1.1rem}
+    .notranslate {background-color:#dddd88; outline: 6px solid #aaaa00}
+    h1 {font-size: 1.4rem}
+    iframe {height: 140px}
+    </style>
+</head>
+
+<body>
+    <h1 class="notranslate">OTFT test page for iframes, attributes, etc.</h1>
+    <p class="notranslate">1. &lt;INPUT&gt; type="text" with placeholder</p>
+    <input type="text" placeholder="テキスト 1.0" />
+    <p class="notranslate">2. &lt;INPUT&gt; type="submit"</p>
+    <input type="submit" value="テキスト 2.0" />
+    <p class="notranslate">3. &lt;INPUT&gt; type="reset"</p>
+    <input type="reset" value="テキスト 3.0" />
+    <p class="notranslate">4. &lt;INPUT&gt; type="button"</p>
+    <input type="button" value="テキスト 4.0" />
+    <p class="notranslate">5. &lt;INPUT&gt; type=text with placeholder and class=notranslate</p>
+    <input type="text" placeholder="テキスト 5.0" class="notranslate" /></div>
+    <p class="notranslate">6. &lt;DIV&gt; with "aria-label", "aria-roledescription", "aria-valuetext", and "aria-description"</p>
+    <div aria-label="テキスト 6.1" aria-roledescription="テキスト 6.2" aria-valuetext="テキスト 6.3" aria-description="テキスト 6.4">テキスト 6.5</div>
+    <p class="notranslate">7. &lt;IFRAME&gt; with srcdoc</p>
+    <iframe srcdoc='<p>テキスト 7.1</p><input type="text" placeholder="テキスト 7.2" />' style="height: 90px"></iframe>
+    <p class="notranslate">8. &lt;IFRAME&gt; with a nested &lt;IFRAME&gt; with srcdoc</p>
+    <iframe srcdoc='<p>テキスト 8.1</p><iframe srcdoc="&lt;p&gt;テキスト 8.2&lt;/p&gt; &lt;input type=&amp;quot;text&amp;quot; placeholder=&amp;quot;テキスト 8.3&amp;quot; /&gt;"></iframe>'></iframe>
+    <p class="notranslate">9. &lt;IFRAME&gt; with content from different origin</p>
+    <iframe src='https://tkyodev.github.io/Uld4dElISnZZMnR6SVE/canonical/index.html'></iframe>
+    <p class="notranslate">10. &lt;CODE&gt;</p>
+    <code>テキスト 10.1 <span>テキスト 10.2</span></code>
+    <p class="notranslate">11. &lt;TEXTAREA&gt;</p>
+    <textarea>テキスト 11.1</textarea>
+    <p class="notranslate">12. &lt;IMG&gt; with alt and title</p>
+    <img src="smily.webp" alt="テキスト 12.1" title="テキスト 12.2" style="width: 30px">
+    <p class="notranslate">13. &lt;LABEL&gt;, &lt;SELECT&gt; and &lt;OPTION&gt;s</p>
+    <label for="pet-select">テキスト 13.1</label>
+    <select id="pet-select">
+        <option value="">テキスト 13.2</option>
+        <option value="テキスト 13.a">テキスト 13.3</option>
+        <option value="テキスト 13.b">テキスト 13.4</option>
+        <option value="テキスト 13.c">テキスト 13.5</option>
+    </select>
+
+    <script>
+        // Simulating WOVN
+        WOVN = 
+            { io: 
+                { changeLang: (item) => {console.log(`<WOVN FAKE FUNCTION WOVN.io.changeLang("${item}")>`)} 
+                , optOut: () => {console.log(`<WOVN FAKE FUNCTION WOVN.io.optOut()>`)}
+                }
+            };
+    </script>
+</body>
+</html> 
