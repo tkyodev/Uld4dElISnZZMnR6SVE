@@ -104,7 +104,7 @@ sites commit =
       , name = "Wovn (WIP)"
       }
     , { path = "crowdin"
-      , snippetTop = extraCanonical commit
+      , snippetTop = \_ -> "" -- extraCanonical commit
       , snippetBottom = \_ -> crowdinSnippet
       , snippetMeta = snippetMetaGoogleNoTranslate
       , scriptSrc = srcPreprodCanonical
