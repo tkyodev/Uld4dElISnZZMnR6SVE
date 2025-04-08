@@ -125,7 +125,7 @@ crowdinSnippet =
     -- See https://rakuten.crowdin.com/u/projects/46/integrations/custom/js-proxy-translator%C2%A6js-proxy-translator-project-integration
     -- for info
     """
-<style>.js-proxy-blur {filter: blur(5px)} #crowdin-language-picker.hidden {display: none}</style>
+<style>#crowdin-language-picker.hidden {display: none}</style>
 <script src="https://proxy-translator.app.crowdin.net/assets/proxy-translator.js"></script>
 <script>
   window.proxyTranslator.init({
@@ -136,11 +136,37 @@ crowdinSnippet =
     filePath: "/tkyodev.github.io.json",
     distribution: "e-24ab64c6ec8b4bd5df303b3g0r",
     distributionSeparateFiles: false,
-    languagesData: {"ko":{"code":"ko","name":"Korean","twoLettersCode":"ko"},"zh-CN":{"code":"zh-CN","name":"Chinese Simplified","twoLettersCode":"zh"},"zh-TW":{"code":"zh-TW","name":"Chinese Traditional","twoLettersCode":"zh"},"en":{"code":"en","name":"English","twoLettersCode":"en"},"ja":{"code":"ja","name":"Japanese","twoLettersCode":"ja"}},
+    languagesData: 
+        { "ko":
+            { "code": "ko"
+            , "name": "Korean"
+            , "twoLettersCode": "ko"
+            }
+        , "zh-CN":
+            { "code":"zh-CN"
+            , "name":"Chinese Simplified"
+            , "twoLettersCode":"zh"
+            }
+        , "zh-TW":
+            { "code":"zh-TW"
+            , "name":"Chinese Traditional"
+            , "twoLettersCode":"zh"
+            }
+        , "en":
+            { "code": "en"
+            , "name": "English"
+            , "twoLettersCode": "en"
+            }
+        , "ja":
+            { "code": "ja"
+            , "name": "Japanese"
+            , "twoLettersCode": "ja"
+            }
+        },
     defaultLanguage: "ja",
     defaultLanguageTitle: "Japanese",
-    languageDetectType: "default",
-    poweredBy: true,
+    languageDetectType: "none", // It was "default"
+    poweredBy: false,
     class: "hidden",
   });
 </script> """
