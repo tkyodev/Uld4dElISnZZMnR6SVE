@@ -122,6 +122,8 @@ sites commit =
 
 crowdinSnippet : String
 crowdinSnippet =
+    -- See https://rakuten.crowdin.com/u/projects/46/integrations/custom/js-proxy-translator%C2%A6js-proxy-translator-project-integration
+    -- for info
     """
 <style>.js-proxy-blur {filter: blur(5px);}</style>
 <script src="https://proxy-translator.app.crowdin.net/assets/proxy-translator.js"></script>
@@ -139,6 +141,7 @@ crowdinSnippet =
     defaultLanguageTitle: "Japanese",
     languageDetectType: "default",
     poweredBy: true,
+    class: "hidden",
   });
 </script> """
 
