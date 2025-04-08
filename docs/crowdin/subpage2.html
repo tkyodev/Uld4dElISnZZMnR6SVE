@@ -28,7 +28,9 @@
         <p>状態を持たない数学的な関数は、並列処理を実現するのに適している。</p>
     </main>
     
-<style>#crowdin-language-picker.hidden {display: none}</style>
+<style>
+    #crowdin-language-picker.hidden {display: none}
+</style>
 <script src="https://proxy-translator.app.crowdin.net/assets/proxy-translator.js"></script>
 <script>
   window.proxyTranslator.init({
@@ -75,6 +77,15 @@
           console.log("Language changed! Language code: " + languageCode + ". Language two letters code: " + twoLettersLanguageCode)
       }
     });
-</script> 
+</script>
+<button onclick="window.proxyTranslator.changeLanguage('ja')">
+    window.proxyTranslator.changeLanguage('ja')
+</button>    
+<button onclick="window.proxyTranslator.changeLanguage('en')">
+    window.proxyTranslator.changeLanguage('en')
+</button>    
+<button onclick="window.proxyTranslator.changeLanguage('ko')">
+    window.proxyTranslator.changeLanguage('ko')
+</button> 
 </body>
 </html>

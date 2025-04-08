@@ -125,7 +125,9 @@ crowdinSnippet =
     -- See https://rakuten.crowdin.com/u/projects/46/integrations/custom/js-proxy-translator%C2%A6js-proxy-translator-project-integration
     -- for info
     """
-<style>#crowdin-language-picker.hidden {display: none}</style>
+<style>
+    #crowdin-language-picker.hidden {display: none}
+</style>
 <script src="https://proxy-translator.app.crowdin.net/assets/proxy-translator.js"></script>
 <script>
   window.proxyTranslator.init({
@@ -172,7 +174,16 @@ crowdinSnippet =
           console.log("Language changed! Language code: " + languageCode + ". Language two letters code: " + twoLettersLanguageCode)
       }
     });
-</script> """
+</script>
+<button onclick="window.proxyTranslator.changeLanguage('ja')">
+    window.proxyTranslator.changeLanguage('ja')
+</button>    
+<button onclick="window.proxyTranslator.changeLanguage('en')">
+    window.proxyTranslator.changeLanguage('en')
+</button>    
+<button onclick="window.proxyTranslator.changeLanguage('ko')">
+    window.proxyTranslator.changeLanguage('ko')
+</button> """
 
 
 folder : String
