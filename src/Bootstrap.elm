@@ -125,7 +125,7 @@ crowdinSnippet =
     -- See https://rakuten.crowdin.com/u/projects/46/integrations/custom/js-proxy-translator%C2%A6js-proxy-translator-project-integration
     -- for info
     """
-<style>.js-proxy-blur {filter: blur(5px);}</style>
+<style>.js-proxy-blur {filter: blur(5px)} .hidden{display: none}</style>
 <script src="https://proxy-translator.app.crowdin.net/assets/proxy-translator.js"></script>
 <script>
   window.proxyTranslator.init({
