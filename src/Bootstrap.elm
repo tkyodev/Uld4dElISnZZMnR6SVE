@@ -167,7 +167,7 @@ crowdinSnippet =
         },
     defaultLanguage: "ja",
     defaultLanguageTitle: "Japanese",
-    languageDetectType: "none", // It was "default"
+    languageDetectType: "Subdomain", // It was "default"
     poweredBy: false,
     class: "hidden",
     callback: function(languageCode, twoLettersLanguageCode) {
