@@ -171,7 +171,7 @@ crowdinSnippet =
     poweredBy: false,
     class: "hidden",
     callback: function(languageCode, twoLettersLanguageCode) {
-          console.log("Language changed! Language code: " + languageCode + ". Language two letters code: " + twoLettersLanguageCode)
+          console.log("🎉 Language changed! Language code: " + languageCode + ". Language two letters code: " + twoLettersLanguageCode)
       }
     });
 </script>
